@@ -1,15 +1,1 @@
-<html>
-
-<head>
-<style>
-
-p {font-family: Arial; font-size: 10px}
-h1 {font-size: 50px; color: blue;}
-
-</style>
-
-</title> INF029</title>
-
-</head>
-
-</html>
+##INF029

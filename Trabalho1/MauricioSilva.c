@@ -266,11 +266,42 @@ int q6(int numerobase, int numerobusca){
     1 se achou 0 se não achou
  */
 
-//  int q7(char matriz[8][10], char palavra[5])
-//  {
-//      int achou;
-//      return achou;
-//  }
+ int q7(char matriz[8][10], char palavra[5]) {
+    int linhas = 8;
+    int colunas = 10;
+
+    int direcoes[8][2] = {
+        {0, 1}, {0, -1}, {1, 0}, {-1, 0},
+        {1, 1}, {-1, -1}, {1, -1}, {-1, 1}
+    };
+
+    int len = strlen(palavra);
+
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            for (int d = 0; d < 8; d++) {
+                int dx = direcoes[d][0];
+                int dy = direcoes[d][1];
+                int k;
+
+                for (k = 0; k < len; k++) {
+                    int ni = i + k * dx;
+                    int nj = j + k * dy;
+
+                    if (ni < 0 || ni >= linhas || nj < 0 || nj >= colunas)
+                        break;
+
+                    if (matriz[ni][nj] != palavra[k])
+                        break;
+                }
+
+                if (k == len)
+                    return 1; 
+            }
+        }
+    }
+    return 0; 
+ }
 
 
 

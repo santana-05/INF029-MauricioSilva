@@ -25,7 +25,7 @@
 void testQ3();
 // void testQ4();
 void testQ5();
-// void testQ6();
+void testQ6();
 // void testQ7();
 
 int main() {
@@ -36,7 +36,7 @@ int main() {
     testQ3();
     // testQ4();
     testQ5();
-    // testQ6();
+    testQ6();
     // testQ7();
 }
 
@@ -180,13 +180,13 @@ void testQ5()
 }
 
 
-// void testQ6()
-// {
-//     printf("%d\n", q6(34567368, 3) == 2);
-//     printf("%d\n", q6(34567368, 4576) == 0);
-//     printf("%d\n", q6(3539343, 3) == 4);
-//     printf("%d\n", q6(3539343, 39) == 1);
-// }
+void testQ6()
+{
+    printf("%d\n", q6(34567368, 3) == 2);
+    printf("%d\n", q6(34567368, 4576) == 0);
+    printf("%d\n", q6(3539343, 3) == 4);
+    printf("%d\n", q6(3539343, 39) == 1);
+}
 
 // void testQ7()
 // {

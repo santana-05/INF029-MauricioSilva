@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include "MauricioSilva.h" // Substitua pelo seu arquivo de header renomeado
 #include <stdlib.h>
+#include <string.h>
 
 //DataQuebrada quebraData(char data[]);
 
@@ -236,11 +237,24 @@ int q5(int num)
     Quantidade de vezes que número de busca ocorre em número base
  */
 
-// int q6(int numerobase, int numerobusca)
-// {
-//     int qtdOcorrencias;
-//     return qtdOcorrencias;
-// }
+int q6(int numerobase, int numerobusca){
+    char strK[20], strN[20];
+    int qtdOcorrencias = 0;
+    
+    sprintf(strK, "%d", numerobusca);
+    sprintf(strN, "%d", numerobase);
+
+    int lenK = strlen(strK);
+    int lenN = strlen(strN);
+    
+    for (int i = 0; i <= lenN - lenK; i++) {
+        if (strncmp(&strN[i], strK, lenK) == 0) {
+            qtdOcorrencias++;
+        }
+    }
+    
+    return qtdOcorrencias;
+}
 
 /*
  Q7 = jogo busca palavras

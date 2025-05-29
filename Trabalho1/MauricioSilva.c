@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-//DataQuebrada quebraData(char data[]);
+DataQuebrada quebraData(char data[]);
 
 /*
 ## função utilizada para testes  ##
@@ -94,22 +94,55 @@
     pode utilizar strlen para pegar o tamanho da string
  */
 
-// int q1(char data[]) {
-//   int datavalida = 1;
+int q1(char data[]){
+    DataQuebrada dq = quebraData(data);
 
-  
-//   //quebrar a string data em strings sDia, sMes, sAno
+    if (dq.valido == 0)
+        return 0;
 
+    int dia = dq.iDia;
+    int mes = dq.iMes;
+    int ano = dq.iAno;
 
-//   //printf("%s\n", data);
+    if (ano < 100)
+    {
+        if (ano >= 0 && ano <= 49)
+            ano += 2000;
+        else
+            ano += 1900;
+    }
 
-//   if (datavalida)
-//       return 1;
-//   else
-//       return 0;
-// }
+    if (mes < 1 || mes > 12)
+        return 0;
 
+    if (dia < 1)
+        return 0;
 
+    int diasMes;
+
+    switch (mes)
+    {
+    case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+        diasMes = 31;
+        break;
+    case 4: case 6: case 9: case 11:
+        diasMes = 30;
+        break;
+    case 2:
+        if ((ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0))
+            diasMes = 29;
+        else
+            diasMes = 28;
+        break;
+    default:
+        return 0;
+    }
+
+    if (dia > diasMes)
+        return 0;
+
+    return 1;
+}
 
 /*
  Q2 = diferença entre duas datas
@@ -166,19 +199,27 @@
  */
 int q3(char *texto, char c, int isCaseSensitive) {
     int qtdOcorrencias = 0;
-    
-    for(int j = 0; j < 251; j++){
-        if(texto[j] <= 90)
-            texto[j] += ' ';
+	
+    if (isCaseSensitive != 1) {
+        if (c >= 'A' && c <= 'Z') {
+            c = c + 32; 
+        }
     }
-    
-    if(c <= 90)
-            c += ' ';
-    
-    for(int i = 0; i < 251; i++){
-        if(c == texto[i])
+
+    for (int i = 0; texto[i] != '\0'; i++) {
+        char atual = texto[i];
+
+        if (isCaseSensitive != 1) {
+            if (atual >= 'A' && atual <= 'Z') {
+                atual = atual + 32;
+            }
+        }
+
+        if (atual == c) {
             qtdOcorrencias++;
+        }
     }
+
     return qtdOcorrencias;
 }
 
@@ -197,13 +238,77 @@ int q3(char *texto, char c, int isCaseSensitive) {
         O retorno da função, n, nesse caso seria 1;
 
  */
+void noSpecials(char *text){
+  int i, j=0;
 
-// int q4(char *strTexto, char *strBusca, int posicoes[30])
-// {
-//     int qtdOcorrencias = -1;
+  const char *comAcentos[] = {"Ä", "Å", "Á", "Â", "À", "Ã", "ä", "á", "â", "à", "ã",
+                                "É", "Ê", "Ë", "È", "é", "ê", "ë", "è",
+                                "Í", "Î", "Ï", "Ì", "í", "î", "ï", "ì",
+                                "Ö", "Ó", "Ô", "Ò", "Õ", "ö", "ó", "ô", "ò", "õ",
+                                "Ü", "Ú", "Û", "ü", "ú", "û", "ù",
+                                "Ç", "ç"};
+                                
+  const char *semAcentos[] = {"A", "A", "A", "A", "A", "A", "a", "a", "a", "a", "a",
+                              "E", "E", "E", "E", "e", "e", "e", "e",
+                              "I", "I", "I", "I", "i", "i", "i", "i",
+                              "O", "O", "O", "O", "O", "o", "o", "o", "o", "o",
+                              "U", "U", "U", "u", "u", "u", "u",
+                              "C", "c"};
 
-//     return qtdOcorrencias;
-// }
+  char buffer[256];
+  buffer[0] = '\0';
+
+  for (int i = 0; i < strlen(text);) {
+    int found = 0;
+    for (int j = 0; j < sizeof(comAcentos) / sizeof(comAcentos[0]); j++) {
+      int len = strlen(comAcentos[j]);
+
+      if (strncmp(&text[i], comAcentos[j], len) == 0) {
+        strcat(buffer, semAcentos[j]);
+        i += len;
+        found = 1;
+        break;
+      }
+    }
+    if (!found) {
+      strncat(buffer, &text[i], 1);
+      i++;
+    }
+  }
+  strcpy(text, buffer);
+}
+
+int q4(char *strTexto, char *strBusca, int posicoes[30]){
+    int qtdOcorrencias = 0;
+    int posicao = 0;
+    int len = strlen(strBusca);
+    noSpecials(strTexto);
+    noSpecials(strBusca);
+
+    for(int i = 0; i<strlen(strTexto);){
+      int achou = 0;
+      if(strTexto[i]==strBusca[0]){
+        achou=1;
+        for(int j=i, k=0; k<len; j++,k++){
+          if(strBusca[k]!=strTexto[j])achou=0;
+        }
+        if(achou){
+          qtdOcorrencias++;
+          posicoes[posicao] = i+1;
+          posicao++;
+          posicoes[posicao] = i+len;
+          posicao++;
+
+          i += len;
+        }else{
+          i++;
+        }
+      }
+      if(!achou)i++;
+    }
+
+    return qtdOcorrencias;
+}
 
 /*
  Q5 = inverte número
@@ -305,61 +410,61 @@ int q6(int numerobase, int numerobusca){
 
 
 
-// DataQuebrada quebraData(char data[]){
-//   DataQuebrada dq;
-//   char sDia[3];
-// 	char sMes[3];
-// 	char sAno[5];
-// 	int i; 
+DataQuebrada quebraData(char data[]){
+  DataQuebrada dq;
+  char sDia[3];
+	char sMes[3];
+	char sAno[5];
+	int i; 
 
-// 	for (i = 0; data[i] != '/'; i++){
-// 		sDia[i] = data[i];	
-// 	}
-// 	if(i == 1 || i == 2){ // testa se tem 1 ou dois digitos
-// 		sDia[i] = '\0';  // coloca o barra zero no final
-// 	}else {
-// 		dq.valido = 0;
-//     return dq;
-//   }  
+	for (i = 0; data[i] != '/'; i++){
+		sDia[i] = data[i];	
+	}
+	if(i == 1 || i == 2){ // testa se tem 1 ou dois digitos
+		sDia[i] = '\0';  // coloca o barra zero no final
+	}else {
+		dq.valido = 0;
+    return dq;
+  }  
 	
 
-// 	int j = i + 1; //anda 1 cada para pular a barra
-// 	i = 0;
+	int j = i + 1; //anda 1 cada para pular a barra
+	i = 0;
 
-// 	for (; data[j] != '/'; j++){
-// 		sMes[i] = data[j];
-// 		i++;
-// 	}
+	for (; data[j] != '/'; j++){
+		sMes[i] = data[j];
+		i++;
+	}
 
-// 	if(i == 1 || i == 2){ // testa se tem 1 ou dois digitos
-// 		sMes[i] = '\0';  // coloca o barra zero no final
-// 	}else {
-// 		dq.valido = 0;
-//     return dq;
-//   }
+	if(i == 1 || i == 2){ // testa se tem 1 ou dois digitos
+		sMes[i] = '\0';  // coloca o barra zero no final
+	}else {
+		dq.valido = 0;
+    return dq;
+  }
 	
 
-// 	j = j + 1; //anda 1 cada para pular a barra
-// 	i = 0;
+	j = j + 1; //anda 1 cada para pular a barra
+	i = 0;
 	
-// 	for(; data[j] != '\0'; j++){
-// 	 	sAno[i] = data[j];
-// 	 	i++;
-// 	}
+	for(; data[j] != '\0'; j++){
+	 	sAno[i] = data[j];
+	 	i++;
+	}
 
-// 	if(i == 2 || i == 4){ // testa se tem 2 ou 4 digitos
-// 		sAno[i] = '\0';  // coloca o barra zero no final
-// 	}else {
-// 		dq.valido = 0;
-//     return dq;
-//   }
+	if(i == 2 || i == 4){ // testa se tem 2 ou 4 digitos
+		sAno[i] = '\0';  // coloca o barra zero no final
+	}else {
+		dq.valido = 0;
+    return dq;
+  }
 
-//   dq.iDia = atoi(sDia);
-//   dq.iMes = atoi(sMes);
-//   dq.iAno = atoi(sAno); 
+  dq.iDia = atoi(sDia);
+  dq.iMes = atoi(sMes);
+  dq.iAno = atoi(sAno); 
 
-// 	dq.valido = 1;
+	dq.valido = 1;
     
-//   return dq;
-// }
+  return dq;
+}
 
